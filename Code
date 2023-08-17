@@ -75,7 +75,6 @@ print("label data:")
 print(dst.head())
 
 # Visualize the raw solar wind data for selected features
-#the show_raw_visualization function allows you to quickly visualize the raw solar wind data for the selected features in separate line plots, making it easier to observe trends and patterns in the data. The function will plot the first 1000 data points for each selected feature to avoid cluttering the plots if the dataset is large.
 plt.style.use('fivethirtyeight')
 def show_raw_visualization(data):
 fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(15, 15), dpi=80)
@@ -98,7 +97,6 @@ print(df.isnull().sum())
 joined = df.join(sunspots).join(dst).fillna(method="ffill")
 
 # Visualize the correlation between features using a clustermap
-#this code creates a clustermap of the correlation matrix of the joined DataFrame. The clustermap is a heatmap that shows the correlation coefficients between pairs of features. Positive correlation coefficients are represented by warmer colors (reds and yellows), while negative correlations are shown by cooler colors (blues and greens). The numeric values of the correlation coefficients are displayed on the heatmap, making it easier to interpret the strength and direction of the correlations between different features. Additionally, the clustermap performs hierarchical clustering on both rows and columns of the correlation matrix,which groups similar features together based on their correlation patterns, making it easier to identify clusters of related features.
 plt.figure(figsize=(20, 15))
 sns.clustermap(joined.corr(), annot=True)
 
@@ -129,30 +127,12 @@ XCOLS = (
 )
 
 # Function to impute missing values using forward fill for sunspot data and␣
-↪interpolation for solar wind data-Overall, this function imputes missing␣
-↪values using forward fill for sunspot data and interpolation for solar wind␣
-↪data. The returned DataFrame, feature_df, will have the missing values␣
-↪replaced with the imputed values using these respective methods.
-#Please note that the effectiveness of these imputation techniques depends on␣
-↪the nature of the data and the distribution of the missing values.␣
-↪Additionally, when using interpolation, it's important to consider the␣
-↪temporal or sequential order of the data, as certain interpolation methods␣
-↪may not be suitable for time-series data with irregular time intervals. For␣
-↪more accurate imputations, domain knowledge and exploration of the data are␣
-↪often required to choose appropriate imputation strategies.
 def impute_features(feature_df):
 feature_df.smoothed_ssn = feature_df.smoothed_ssn.fillna(method="ffill")
 feature_df = feature_df.interpolate()
 return feature_df
 
 # Function to aggregate features to the floor of each hour using mean and␣
-↪standard deviation-By using this function, you can efficiently aggregate␣
-↪data at an hourly level and obtain summary statistics for each period. The␣
-↪aggregation can be helpful when dealing with time-series data that has␣
-↪high-frequency measurements and you need to obtain summary information at a␣
-↪lower frequency, such as hourly averages or standard deviations.␣
-↪Additionally, you can customize the aggregation functions by passing␣
-↪different functions in the aggs list.
 def aggregate_hourly(feature_df, aggs=["mean", "std"]):
 agged = feature_df.groupby(
 ["period", feature_df.index.get_level_values(1).floor("H")]
@@ -161,10 +141,6 @@ agged.columns = ["_".join(x) for x in agged.columns]
 return agged
 
  # Function to preprocess features-Overall, this function allows you to␣
-↪preprocess the solar wind and sunspot data, including aggregation,␣
-↪normalization, and imputation of missing values. The returned imputed␣
-↪DataFrame contains the preprocessed data, while the scaler object can be␣
-↪used to normalize new data in the same way as the training data.
 def preprocess_features(df, sunspots, scaler=None, subset=None):
 if subset:
 df = df[subset]
@@ -189,12 +165,6 @@ print(features.shape)
 assert (features.isna().sum() == 0).all()
 
 # Define target columns for labels-In summary, this function takes a DataFrame␣
-↪of dependent variable data (dst), creates a copy of it (y), and then␣
-↪generates a new column "t1" in y that contains the shifted labels. The␣
-↪output DataFrame y will have columns "t0" and "t1," where "t0" contains the␣
-↪original labels, and "t1" contains the labels shifted one time step ahead in␣
-↪time. This is commonly done in time series forecasting tasks, where we want␣
-↪to use the current values (t0) to predict the next values (t1).
 YCOLS = ["t0", "t1"]
 # Function to process labels for forecasting
 def process_labels(dst):
@@ -210,12 +180,6 @@ labels = process_labels(dst)
 data = labels.join(features)
 
 # Function to split data across periods into train, test, and validation␣
-↪sets-The purpose of splitting the data into these sets is to evaluate the␣
-↪performance of time series forecasting models on unseen data. The training␣
-↪set is used to train the model, the validation set is used to tune␣
-↪hyperparameters and make early stopping decisions during training, and the␣
-↪testing set is used to assess the final performance of the trained model on␣
-↪unseen data.
 def get_train_test_val(data, test_per_period, val_per_period):
 test = data.groupby("period").tail(test_per_period)
 interim = data[~data.index.isin(test.index)]
@@ -224,8 +188,7 @@ train = interim[~interim.index.isin(val.index)]
 return train, test, val
 
 # Split data into train, test, and validation sets using the defined function
-train, test, val = get_train_test_val(data, test_per_period=6_000,␣
-↪val_per_period=3_000)
+train, test, val = get_train_test_val(data, test_per_period=6_000,val_per_period=3_000)
 
 
 import tensorflow as tf
@@ -264,18 +227,7 @@ print(f"Number of val batches: {len(val_ds)}")
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Conv2D, Flatten, Dense, LSTM
 # Define the LSTM model-This code defines an LSTM (Long Short-Term Memory)␣
-↪model for time series forecasting using the Keras library. The model has a␣
-↪single LSTM layer followed by a dense output layer. Hyperparameters like the␣
-↪number of epochs, LSTM neurons, dropout rate, and whether the model is␣
-↪stateful are specified in the `model_config` dictionary. The model is␣
-↪compiled with mean squared error loss and the Adam optimizer. The number of␣
-↪input features is determined by `len(XCOLS)`, and the number of output␣
-↪features is determined by the length of `YCOLS`. The model's architecture␣
-↪and trainable parameters are summarized using `model.summary()`. The LSTM␣
-↪model can be further customized and trained on appropriate training data for␣
-↪making predictions on time series data.
-model_config = {"n_epochs": 20, "n_neurons": 512, "dropout": 0.4, "stateful":␣
-↪False}
+model_config = {"n_epochs": 20, "n_neurons": 512, "dropout": 0.4, "stateful":False}
 model = Sequential()
 model.add(
 LSTM(
@@ -311,30 +263,10 @@ plt.plot(values)
 test_ds = timeseries_dataset_from_df(test, data_config["batch_size"])
 
 # Evaluate the model on the test dataset and calculate the RMSE-trained a␣
-↪regression model, and during the test phase, the model achieved an RMSE of␣
-↪13.23 on the test dataset. An RMSE of 13.23 suggests that, on average, the␣
-↪model's predictions have an error of approximately 13.23 units compared to␣
-↪the true target values. Lowering the RMSE is generally desired to improve␣
-↪the model's accuracy.Test RMSE: 13.23: The value 13.23 represents the Root␣
-↪Mean Squared Error (RMSE) on the test dataset. RMSE is a common evaluation␣
-↪metric for regression tasks. It measures the average magnitude of the error␣
-↪between predicted and actual values. Lower RMSE values indicate better model␣
-↪performance, as it means the model's predictions are closer to the actual␣
-↪target values.
 mse = model.evaluate(test_ds)
 print(f"Test RMSE: {mse**.5:.2f}")
 
 # Save the trained model, scaler, and data configuration for future use-In this␣
-↪code, the trained LSTM model is saved as "model" in the HDF5 format, while␣
-↪the `scaler` object is serialized and saved as "scaler.pck" using the␣
-↪`pickle` module. The `data_config` dictionary, which holds configurations␣
-↪such as `timesteps`, `batch_size`, and the selected subset of solar wind␣
-↪features (`SOLAR_WIND_FEATURES`), is updated and printed. Finally, the␣
-↪`data_config` dictionary is saved to a JSON file named "config.json." By␣
-↪preserving the model, scaler, and data configuration, future predictions can␣
-↪be made efficiently on new data, and model development can be continued␣
-↪without retraining from scratch. All saved files will be stored in the␣
-↪current working directory of the Python script.
 import pickle
 import json
 model.save("model")
