@@ -1,5 +1,4 @@
-# PredictingSolarFlareswithSpaceWeatherData
-# Solar Flare Prediction using Machine Learning ☀️
+# Predicting Solar Flares with Space Weather Data☀️
 
 ## Description
 
