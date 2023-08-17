@@ -8,7 +8,9 @@
 
 📚 The project utilizes a comprehensive dataset containing various features related to solar activity, such as sunspot numbers, magnetic field measurements, and historical flare occurrences. These features play a crucial role in training a machine learning model capable of forecasting solar flares accurately.
 
-The dataset is collected from reliable space observation sources and curated to ensure data quality and integrity. It consists of time-series data spanning several years, capturing various solar parameters that are potentially linked to flare events.
+The dataset is collected from Kaggle and curated to ensure data quality and integrity. It consists of time-series data spanning several years, capturing various solar parameters that are potentially linked to flare events. The link of dataset is given below where you can download the dataset -
+
+https://drive.google.com/drive/folders/13-WuRei5etJtD-aQLu7Y4bXvevcRS8D2?usp=sharing
 
 ## Model Development
 
