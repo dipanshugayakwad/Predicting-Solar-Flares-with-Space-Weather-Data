@@ -14,7 +14,8 @@ https://drive.google.com/drive/folders/13-WuRei5etJtD-aQLu7Y4bXvevcRS8D2?usp=sha
 
 ## Model Development
 
-🔬 The core of this project involves developing a predictive model using machine learning algorithms. Various algorithms such as Random Forest, Support Vector Machine (SVM), and Neural Networks are explored and implemented. The model leverages the historical solar activity data to learn patterns and make predictions about the likelihood of solar flares.
+🔬 The core of this project involves developing a predictive model using machine learning and deep learning algorithms. The LSTM model is chosen for time series forecasting due to its ability to capture long-term dependencies in sequential data.The LSTM model is compiled with the mean squared error loss function ("mean_squared_error") and the Adam optimizer.The trained LSTM model is evaluated on the validation dataset to assess its
+performance.The model's loss and validation metrics are recorded and can be visualized to monitor training progress.
 
 By training the model on a labeled dataset containing information about past flare occurrences and solar conditions, it learns to recognize patterns that are indicative of imminent flare events.
 
@@ -24,23 +25,17 @@ By training the model on a labeled dataset containing information about past fla
 
 Through data analysis, the project aims to uncover hidden trends, identify important features, and establish a foundational understanding of how different solar factors contribute to the occurrence of solar flares.
 
-## Feature Engineering
-
-🔍 Feature engineering is a critical step in improving the model's predictive performance. It involves transforming raw solar data into meaningful features that can enhance the model's ability to capture flare precursors. Various statistical, temporal, and domain-specific features are extracted from the raw data.
-
-For instance, features like the rate of change of sunspot activity, the relative positions of sunspots, and magnetic field gradients are engineered to provide the model with valuable input signals.
-
 ## Implementation
 
-💻 The machine learning models are implemented using popular libraries such as scikit-learn for traditional algorithms and TensorFlow for neural networks. The codebase is organized into modular components, each responsible for data preprocessing, model training, evaluation, and prediction.
+💻 The test dataset is prepared to evaluate the model's performance on unseen data.Similar to the validation data preparation, the test data is formatted into input sequences and target values.
 
-The implementation is designed to be user-friendly, allowing researchers and space agencies to easily reproduce the experiments, modify the model architecture, and adapt the codebase to new solar datasets.
+The trained LSTM model is evaluated on the test dataset to calculate the root mean squared error (RMSE) as a performance metric.RMSE is a measure of the difference between the predicted and actual values. The model's performance metrics, including the test RMSE value, are printed for evaluation.
 
 ## Model Evaluation
 
-📈 The performance of the developed models is rigorously evaluated using appropriate metrics such as precision, recall, F1-score, and area under the ROC curve. These metrics provide insights into the model's ability to correctly predict solar flare events and its generalization to unseen data.
+📈 We analyze how well the model learned during training. Plotting the loss over epochs helps us understand whether the model is learning effectively or if there's overfitting.
 
-The evaluation process involves techniques such as cross-validation to assess the model's robustness and its potential to perform effectively in operational space weather forecasting scenarios.
+Each step contributes to the overall process of loading, preprocessing, modeling, training, and evaluating a neural network for time series prediction. Understanding these steps helps in building and fine-tuning similar projects for various applications.
 
 ## Deployment and Use
 
